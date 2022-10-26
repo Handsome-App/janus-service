@@ -1,1 +1,3 @@
 *.pyc
+*.sock
+/__pycache__
