@@ -62,16 +62,32 @@ def convert_and_trim_bb(image, rect):
 	# return our bounding box coordinates
 	return (startX, startY, w, h)
 
+def numpy2pil(np_array: np.ndarray) -> Image:
+    """
+    Convert an HxWx3 numpy array into an RGB Image
+    """
+
+    assert_msg = 'Input shall be a HxWx3 ndarray'
+    assert isinstance(np_array, np.ndarray), assert_msg
+    assert len(np_array.shape) == 3, assert_msg
+    assert np_array.shape[2] == 3, assert_msg
+
+    img = Image.fromarray(np_array, 'RGB')
+    return img
+
+
 @app.route('/api/facedetect',methods=['POST'])
 def facedetect():
     """get face with dlib
     :return: top left x,top left y , w, h)
     """
-    fileurl=flask.request.args.get("image")
+    fileurl1=flask.request.args.get("image")
+    fileurl=fileurl1.replace(" ", "%20")
     req = urllib.request.urlopen(fileurl)
     #arr = io.imread(fileurl)
     arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
-    img = cv2.imdecode(arr, -1)
+    img = cv2.imdecode(arr, cv2.IMREAD_COLOR)
+    #cv2.imwrite('test.jpg',img)
     
     #filepath=flask.request.args.get("image")
     #img = dlib.load_rgb_image(filepath)
